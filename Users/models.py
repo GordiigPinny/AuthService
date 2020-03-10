@@ -18,9 +18,9 @@ class UserExt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     pin_sprite = models.BigIntegerField(default=1, null=False)
     geopin_sprite = models.BigIntegerField(default=1, null=False)
-    unlocked_pins = models.TextField(blank=True, null=False, default='',
+    unlocked_pins = models.TextField(blank=True, null=False, default='1',
                                      validators=[validate_comma_separated_integer_list])
-    unlocked_geopins = models.TextField(blank=True, null=False, default='',
+    unlocked_geopins = models.TextField(blank=True, null=False, default='1',
                                         validators=[validate_comma_separated_integer_list])
     achievements = models.TextField(blank=True, null=False, default='',
                                     validators=[validate_comma_separated_integer_list])

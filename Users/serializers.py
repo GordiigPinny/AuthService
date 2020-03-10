@@ -38,6 +38,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     """
     Сериализатор для рекистрации пользователя
     """
+    email = serializers.EmailField(required=False)
+
     class Meta:
         model = User
         fields = [

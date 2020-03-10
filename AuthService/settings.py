@@ -49,7 +49,7 @@ DJANGO_APPS = [
 ]
 
 DEV_APPS = [
-
+    'Users',
 ]
 
 THIRD_PARTY_APPS = [
@@ -136,6 +136,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# Rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
 
 try:
     from .settings_local import *

@@ -7,6 +7,7 @@ class UserListSerializer(serializers.ModelSerializer):
     Сериализатор спискового представления юзера
     """
     profile_pic_link = serializers.URLField(source='userext.profile_pic_link')
+    is_moderator = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -14,7 +15,12 @@ class UserListSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'profile_pic_link',
+            'is_superuser',
+            'is_moderator',
         ]
+
+    def get_is_moderator(self, instance: User):
+        return instance.userext.is_moderator()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
     unlocked_geopins = serializers.SerializerMethodField()
     rating = serializers.CharField(source='userext.rating')
     profile_pic_link = serializers.URLField(source='userext.profile_pic_link')
+    is_moderator = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -42,6 +49,8 @@ class UserSerializer(serializers.ModelSerializer):
             'rating',
             'profile_pic_link',
             'created_dt',
+            'is_superuser',
+            'is_moderator',
         ]
 
     def get_unlocked_pins(self, instance: User):
@@ -49,6 +58,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_unlocked_geopins(self, instance: User):
         return [int(x) for x in instance.userext.unlocked_geopins.split(',')]
+
+    def get_is_moderator(self, instance: User):
+        return instance.userext.is_moderator()
 
 
 class RegisterSerializer(serializers.ModelSerializer):

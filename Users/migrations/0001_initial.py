@@ -20,6 +20,8 @@ class Migration(migrations.Migration):
             name='UserExt',
             fields=[
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('deleted_flg', models.BooleanField(default=False)),
+                ('created_dt', models.DateTimeField(auto_now_add=True)),
                 ('pin_sprite', models.BigIntegerField(default=1)),
                 ('geopin_sprite', models.BigIntegerField(default=1)),
                 ('unlocked_pins', models.TextField(blank=True, default='1', validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:,\\d+)*\\Z'), code='invalid', message='Enter only digits separated by commas.')])),

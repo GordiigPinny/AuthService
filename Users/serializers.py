@@ -2,11 +2,27 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
+class UserListSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор спискового представления юзера
+    """
+    profile_pic_link = serializers.URLField(source='userext.profile_pic_link')
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'profile_pic_link',
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Сериализатор юзера
     """
     pin_sprite = serializers.IntegerField(source='userext.pin_sprite')
+    created_dt = serializers.DateTimeField(source='userext.created_dt')
     geopin_sprite = serializers.IntegerField(source='userext.geopin_sprite')
     unlocked_pins = serializers.SerializerMethodField()
     unlocked_geopins = serializers.SerializerMethodField()
@@ -25,6 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
             'unlocked_geopins',
             'rating',
             'profile_pic_link',
+            'created_dt',
         ]
 
     def get_unlocked_pins(self, instance: User):

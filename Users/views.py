@@ -29,13 +29,21 @@ class RegisterView(APIView):
         return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserInfoView(APIView):
+    """
+    Вьюха для возврата инфы о юзере по токену
+    """
+    def get(self, request: Request):
+        serializer = UserSerializer(instance=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserListView(ListAPIView):
     """
     Вьюха для спискового представления юзеров
     """
     pagination_class = LimitOffsetPagination
     serializer_class = UserListSerializer
-    permission_classes = (IsModeratorJWT, )
 
     def get_queryset(self):
         return User.objects.all()

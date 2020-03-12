@@ -16,7 +16,6 @@ class UserExt(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    deleted_flg = models.BooleanField(default=False)
     created_dt = models.DateTimeField(auto_now_add=True)
     pin_sprite = models.BigIntegerField(default=1, null=False)
     geopin_sprite = models.BigIntegerField(default=1, null=False)

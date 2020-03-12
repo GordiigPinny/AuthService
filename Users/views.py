@@ -38,7 +38,7 @@ class UserListView(ListAPIView):
     permission_classes = (IsModeratorJWT, )
 
     def get_queryset(self):
-        return User.objects.filter(userext__deleted_flg=False)
+        return User.objects.all()
 
 
 class UserDetailView(APIView):
@@ -47,7 +47,7 @@ class UserDetailView(APIView):
     """
     def get(self, request: Request, pk: int):
         try:
-            user = User.objects.get(pk=pk, userext__deleted_flg=False)
+            user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = UserSerializer(instance=user)
@@ -55,13 +55,12 @@ class UserDetailView(APIView):
 
     def delete(self, request: Request, pk: int):
         try:
-            user = User.objects.get(pk=pk, userext__deleted_flg=False)
+            user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         if request.user != user and not request.user.userext.is_moderator():
             return Response({'error': 'Only user can delete itself, or moderator'}, status=status.HTTP_403_FORBIDDEN)
         if user.is_superuser:
             return Response({'error': 'No one can delete superuser, even himself'}, status=status.HTTP_403_FORBIDDEN)
-        user.userext.deleted_flg = True
-        user.save()
+        user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -8,7 +8,9 @@ from django.contrib.auth.models import User
 class BaseTestCase(TestCase):
     def setUp(self):
         self.url_prefix = '/api/'
-        self.user, _ = User.objects.get_or_create(username='Test', password='Test')
+        self.user_username = 'Test'
+        self.user_password = 'Test'
+        self.user, _ = User.objects.get_or_create(username=self.user_username, password=self.user_password)
 
     def _get_api_client(self, auth: bool) -> APIClient:
         client = APIClient()

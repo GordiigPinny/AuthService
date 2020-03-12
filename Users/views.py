@@ -5,6 +5,7 @@ from rest_framework.views import APIView, Response, Request
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from django.contrib.auth.models import User
 from Users.serializers import RegisterSerializer, UserSerializer, UserListSerializer
+from Users.permissions import IsModeratorJWT
 
 
 class RegisterView(APIView):
@@ -34,6 +35,7 @@ class UserListView(ListAPIView):
     """
     pagination_class = LimitOffsetPagination
     serializer_class = UserListSerializer
+    permission_classes = (IsModeratorJWT, )
 
     def get_queryset(self):
         return User.objects.filter(userext__deleted_flg=False)

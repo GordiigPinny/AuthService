@@ -29,61 +29,77 @@ class BaseTestCase(TestCase):
             return json_response
 
     def get_response_and_check_status(self, url: str, data: dict = {}, expected_status_code: int = 200,
-                                      auth: bool = True):
+                                      auth: bool = True, token: Union[str, None] = None):
         """
         GET-запрос на сервер с проверкой статус-кода
         :param url: Урла куда стучимся
         :param data: Что кладем в body
         :param expected_status_code: Ожидаемый код возврата
         :param auth: Нужно ли аутентифицироваться (тестовым юзером)
+        :param token: Токен, если нужно тестить что-то с ним (юзать с auth = False)
         :return: JSON, который вернулся с сервера
         """
         client = self._get_api_client(auth)
+        if token:
+            assert not auth
+            client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.get(url, data=data)
         json = self._handle_response(response, expected_status_code, url)
         return json
 
     def post_response_and_check_status(self, url: str, data: dict = {}, expected_status_code: int = 201,
-                                       auth: bool = True):
+                                       auth: bool = True, token: Union[str, None] = None):
         """
         POST-запрос на сервер с проверкой статус-кода
         :param url: Урла куда стучимся
         :param data: Что кладем в body
         :param expected_status_code: Ожидаемый код возврата
         :param auth: Нужно ли аутентифицироваться (тестовым юзером)
+        :param token: Токен, если нужно тестить что-то с ним (юзать с auth = False)
         :return: JSON, который вернулся с сервера
         """
         client = self._get_api_client(auth)
+        if token:
+            assert not auth
+            client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.post(url, data=data, format='json')
         json = self._handle_response(response, expected_status_code, url)
         return json
 
     def patch_response_and_check_status(self, url: str, data: dict = {}, expected_status_code: int = 202,
-                                        auth: bool = True):
+                                        auth: bool = True, token: Union[str, None] = None):
         """
         PATCH-запрос на сервер с проверкой статус-кода
         :param url: Урла куда стучимся
         :param data: Что кладем в body
         :param expected_status_code: Ожидаемый код возврата
         :param auth: Нужно ли аутентифицироваться (тестовым юзером)
+        :param token: Токен, если нужно тестить что-то с ним (юзать с auth = False)
         :return: JSON, который вернулся с сервера
         """
         client = self._get_api_client(auth)
+        if token:
+            assert not auth
+            client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.patch(url, data=data, format='json')
         json = self._handle_response(response, expected_status_code, url)
         return json
 
     def delete_response_and_check_status(self, url: str, data: dict = {}, expected_status_code: int = 204,
-                                         auth: bool = True):
+                                         auth: bool = True, token: Union[str, None] = None):
         """
         DELETE-запрос на сервер с проверкой статус-кода
         :param url: Урла куда стучимся
         :param data: Что кладем в body
         :param expected_status_code: Ожидаемый код возврата
         :param auth: Нужно ли аутентифицироваться (тестовым юзером)
+        :param token: Токен, если нужно тестить что-то с ним (юзать с auth = False)
         :return: JSON, который вернулся с сервера
         """
         client = self._get_api_client(auth)
+        if token:
+            assert not auth
+            client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
         response = client.delete(url, data=data)
         json = self._handle_response(response, expected_status_code, url)
         return json

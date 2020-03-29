@@ -1,18 +1,14 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import User
-from Users.models import UserExt
+from django.contrib.auth.models import User, Group
 
 
-@receiver(signal=post_save, sender=User)
-def create_userext_after_user(sender, instance: User, created, **kwargs):
+@receiver(post_save, sender=User)
+def add_super_to_moders_group(sender, instance: User, created, **kwargs):
     if not created:
         return
-    UserExt.objects.create(user=instance)
-
-
-@receiver(signal=post_save, sender=User)
-def save_userext_after_user(sender, instance: User, created, **kwargs):
-    if created:
+    if not instance.is_superuser:
         return
-    instance.userext.save()
+    g, _ = Group.objects.get_or_create(name='moderators')
+    g.user_set.add(instance)
+    g.save()

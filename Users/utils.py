@@ -22,3 +22,10 @@ def get_user_from_token(token: str) -> Union[User, None]:
         return VerifyJSONWebTokenSerializer().validate({'token': token})
     except ValidationError:
         return None
+
+
+def is_moderator(user: User) -> bool:
+    """
+    Проверка юзера на модератора
+    """
+    return user.groups.filter(name='moderators').exists()

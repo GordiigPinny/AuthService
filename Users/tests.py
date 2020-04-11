@@ -1,6 +1,6 @@
 from TestUtils.models import BaseTestCase
-from django.contrib.auth.models import User, Group
-from rest_framework_jwt.settings import api_settings
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RegisterTestCase(BaseTestCase):
@@ -24,7 +24,7 @@ class RegisterTestCase(BaseTestCase):
 
     def testRegisterOk(self):
         response = self.post_response_and_check_status(url=self.path, data=self.data_201)
-        self.fields_test(response, needed_fields=['token', 'user'], allow_extra_fields=False)
+        self.fields_test(response, needed_fields=['access', 'refresh'], allow_extra_fields=False)
 
     def testRegisterFail_ExistingUsername(self):
         _ = self.post_response_and_check_status(url=self.path, data=self.data_400_1, expected_status_code=400)
@@ -42,11 +42,7 @@ class UsersListTestCase(BaseTestCase):
         self.path = self.url_prefix + 'users/'
 
     def get_token(self):
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-        payload = jwt_payload_handler(self.user)
-        return jwt_encode_handler(payload)
+        return str(RefreshToken.for_user(self.user).access_token)
 
     def testGet200_OK(self):
         token = self.get_token()
@@ -65,11 +61,7 @@ class UserDetailTestCase(BaseTestCase):
         self.path_404 = self.url_prefix + 'users/101010101/'
 
     def get_token(self):
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-        payload = jwt_payload_handler(self.user)
-        return jwt_encode_handler(payload)
+        return str(RefreshToken.for_user(self.user).access_token)
 
     def testGet200_OK(self):
         response = self.get_response_and_check_status(url=self.path, token=self.get_token())
@@ -79,33 +71,22 @@ class UserDetailTestCase(BaseTestCase):
     def testGet404_WrongId(self):
         _ = self.get_response_and_check_status(url=self.path_404, expected_status_code=404, token=self.get_token())
 
-    def testDelete204_OK(self):
+    def testDelete204_Superuser(self):
+        self.user.is_superuser = True
+        self.user.save()
+        _ = self.delete_response_and_check_status(url=self.path, token=self.get_token())
+
+    def testDelete204_UserHimself(self):
         _ = self.delete_response_and_check_status(url=self.path, token=self.get_token())
 
     def testDelete404_WrongId(self):
-        _ = self.delete_response_and_check_status(url=self.path_404, expected_status_code=404, token=self.get_token())
-
-    def testDelete403_WrongUser(self):
-        user2 = User.objects.create(username='eeee', password='eeee')
-        path_403 = self.url_prefix+f'users/{user2.id}/'
-        _ = self.delete_response_and_check_status(url=path_403, expected_status_code=403, token=self.get_token())
-
-    def testDelete204_ModeratorDeleteAnother(self):
-        user2 = User.objects.create(username='eeee', password='eeee')
-        g, _ = Group.objects.get_or_create(name='moderators')
-        g.user_set.add(self.user)
-        g.save()
-        path_204 = self.url_prefix + f'users/{user2.id}/'
-        _ = self.delete_response_and_check_status(url=path_204, token=self.get_token())
+        _ = self.delete_response_and_check_status(url=self.path_404, expected_status_code=403, token=self.get_token())
 
 
 class ChangePasswordTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.new_user = User.objects.create(username='Local', password='')
-        self.path = self.url_prefix + f'users/{self.user.id}/change_password/'
-        self.path_403 = self.url_prefix + f'users/{self.new_user.id}/change_password/'
-        self.path_404 = self.url_prefix + f'users/{self.user.id+1000}/change_password/'
+        self.path = self.url_prefix + f'change_password/'
         self.data_202 = {
             'old_password': self.user_password,
             'password': '123456789',
@@ -131,24 +112,10 @@ class ChangePasswordTestCase(BaseTestCase):
         }
 
     def get_token(self):
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-        payload = jwt_payload_handler(self.user)
-        return jwt_encode_handler(payload)
+        return str(RefreshToken.for_user(self.user).access_token)
 
     def testPatch202_OK(self):
         _ = self.patch_response_and_check_status(url=self.path, data=self.data_202, token=self.get_token())
-
-    def testPatch403_WrongId(self):
-        self.user.is_superuser = False
-        self.user.save()
-        _ = self.patch_response_and_check_status(url=self.path_403, data=self.data_202, expected_status_code=403,
-                                                 token=self.get_token())
-
-    def testPatch404_WrongId(self):
-        _ = self.patch_response_and_check_status(url=self.path_404, data=self.data_202, expected_status_code=404,
-                                                 token=self.get_token())
 
     def testPatch400_WrongJson(self):
         _ = self.patch_response_and_check_status(url=self.path, data=self.data_400_1, expected_status_code=400,

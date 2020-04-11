@@ -10,8 +10,8 @@ class WriteOnlyByMeAndSuperuser(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
-        user_id = view.kwargs['pk']
-        return (IsAuthenticated().has_permission(request, view) and request.user.pk == user_id) or \
+        user_id = int(view.kwargs['pk'])
+        return (IsAuthenticated().has_permission(request, view) and (request.user.pk == user_id)) or \
             IsSuperuserJWT().has_permission(request, view)
 
 

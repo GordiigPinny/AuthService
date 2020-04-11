@@ -20,12 +20,18 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 from AuthService.jwt_utils import UserTokenObtainPairView
+from Apps.views import GetTokenPairForApp, ValidateTokenPairForApp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/api-token-auth/', UserTokenObtainPairView.as_view()),
     url(r'^api/api-token-refresh/', TokenRefreshView.as_view()),
     url(r'^api/api-token-verify/', TokenVerifyView.as_view()),
+
+    url(r'^api/app-token-auth/', GetTokenPairForApp.as_view()),
+    url(r'^api/app-token-verify/', ValidateTokenPairForApp.as_view()),
+    # url(r'^api/app-token-refresh/', TokenRefreshView.as_view()),
+
     url(r'^api/', include('Users.urls')),
     url(r'^api/', include('Apps.urls')),
 ]

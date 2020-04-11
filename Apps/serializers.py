@@ -6,16 +6,16 @@ class AppSerializer(serializers.ModelSerializer):
     """
     Сериализатор приложения
     """
-    name = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    id = serializers.CharField(required=True, allow_null=False, allow_blank=False)
     secret = serializers.CharField(required=True, allow_null=False, allow_blank=False, write_only=True)
 
     class Meta:
         model = App
         fields = [
-            'name',
+            'id',
             'secret',
         ]
 
     def create(self, validated_data):
-        new = App.create_app_secured(validated_data['name'], validated_data['secret'])
+        new = App.objects.create(id=validated_data['id'], secret=validated_data['secret'])
         return new

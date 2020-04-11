@@ -9,6 +9,7 @@ class AppRefreshToken(RefreshToken):
     token_type = 'app_refresh'
     lifetime = api_settings.REFRESH_TOKEN_LIFETIME
 
+    @property
     def access_token(self):
         access = AppAccessToken()
 

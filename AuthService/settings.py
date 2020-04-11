@@ -166,4 +166,9 @@ except ImportError:
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': ACCESS_TOKEN_LIFETIME,
     'REFRESH_TOKEN_LIFETIME': REFRESH_TOKEN_LIFETIME,
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'Apps.tokens.AppAccessToken',
+    ),
+    'USER_ID_CLAIM': 'id',
 }

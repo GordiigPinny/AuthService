@@ -18,6 +18,8 @@ class RegisterView(APIView):
         if s.is_valid():
             s.save()
             token = RefreshToken.for_user(s.instance)
+            token['username'] = s.instance.username
+            token['email'] = s.instance.email
             data = {
                 'refresh': str(token),
                 'access': str(token.access_token),
@@ -82,7 +84,9 @@ class ChangePasswordView(APIView):
         s = ChangePasswordSerializer(data=request.data, instance=user)
         if s.is_valid():
             s.save()
-            token = RefreshToken.for_user(s.instance)
+            token = RefreshToken.for_user(request.user)
+            token['username'] = request.user.username
+            token['email'] = request.user.email
             data = {
                 'refresh': str(token),
                 'access': str(token.access_token),

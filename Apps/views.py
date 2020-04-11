@@ -68,7 +68,7 @@ class GetTokenPairForApp(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class ValidateTokenPairForApp(APIView):
+class VerifyTokenForApp(APIView):
     """
     200 если токен еще валиден, иначе 401
     """
@@ -92,7 +92,6 @@ class ValidateTokenPairForApp(APIView):
             app_id = payload['id']
         except KeyError:
             return Response({'error', 'No id in token'}, status=status.HTTP_401_UNAUTHORIZED)
-
         if token_type != AppRefreshToken().access_token.token_type:
             return Response({'error': 'Wrong token_type'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -100,3 +99,41 @@ class ValidateTokenPairForApp(APIView):
         if App.objects.filter(id=app_id).exists():
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class RefreshTokenForApp(APIView):
+    """
+    Рефреш токена для приложения
+    """
+    authentication_classes = ()
+
+    def post(self, request: Request):
+        try:
+            token = request.data['refresh']
+        except KeyError:
+            return Response({'error': 'Field "refresh" is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            payload = token_backend.decode(token)
+        except (InvalidTokenError, TokenBackendError):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            token_type = payload['token_type']
+        except KeyError:
+            return Response({'error': 'No token_type for token was given'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            app_id = payload['id']
+        except KeyError:
+            return Response({'error', 'No id in token'}, status=status.HTTP_401_UNAUTHORIZED)
+        if token_type != AppRefreshToken.token_type:
+            return Response({'error': 'Wrong token_type'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Exp_time проверяется в decode
+        if not App.objects.filter(id=app_id).exists():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh = AppRefreshToken(token=token, verify=False)
+        data = {
+            'access': str(refresh.access_token),
+        }
+        return Response(data, status=status.HTTP_200_OK)

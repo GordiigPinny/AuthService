@@ -7,7 +7,7 @@ from rest_framework_simplejwt.exceptions import TokenBackendError
 from jwt.exceptions import InvalidTokenError
 from Users.permissions import IsSuperuserJWT
 from Apps.models import App
-from Apps.serializers import AppSerializer
+from Apps.serializers import AppSerializer, AppForTokenSerializer
 from Apps.tokens import AppRefreshToken
 
 
@@ -53,13 +53,13 @@ class GetTokenPairForApp(APIView):
     authentication_classes = ()
 
     def post(self, request: Request):
-        s = AppSerializer(data=request.data)
+        s = AppForTokenSerializer(data=request.data)
         if not s.is_valid():
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
         try:
-            app = App.objects.get(id=s['id'].value, secret=request.data['secret'])
+            app = App.objects.get(id=s['id'].value, secret=s['secret'].value)
         except App.DoesNotExist:
-            return Response({'error': 'Wrong app credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Wrong app credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         token = AppRefreshToken.for_user(app)
         data = {
             'access': str(token.access_token),

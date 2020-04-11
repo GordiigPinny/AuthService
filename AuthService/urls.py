@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^api/api-token-refresh/', refresh_jwt_token),
     url(r'^api/api-token-verify/', verify_jwt_token),
     url(r'^api/', include('Users.urls')),
+    url(r'^api/', include('Apps.urls')),
 ]
 
 

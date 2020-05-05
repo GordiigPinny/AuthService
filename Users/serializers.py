@@ -29,7 +29,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     Сериализатор для рекистрации пользователя
     """
     username = serializers.CharField(max_length=128, validators=[UniqueValidator(queryset=User.objects.all())])
-    email = serializers.EmailField(required=False, max_length=256)
+    email = serializers.EmailField(required=False, max_length=256, allow_blank=True)
     password = serializers.CharField(allow_null=False, allow_blank=False, min_length=6, max_length=256, write_only=True)
 
     class Meta:

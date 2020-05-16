@@ -101,18 +101,6 @@ if ON_HEROKU == '0':
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('DB_NAME', 'Err'),
-            'USER' : os.getenv('DB_USER', 'Err'),
-            'PASSWORD' : os.getenv('DB_PASSWORD', 'Err'),
-            'HOST' : os.getenv('DB_HOST', 'Err'),
-            'PORT' : '5432',
-        }
-    }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -178,6 +166,10 @@ try:
     from .settings_local import *
 except ImportError:
     pass
+
+if not DEBUG:
+    import django_heroku
+    django_heroku.settings(locals())
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': ACCESS_TOKEN_LIFETIME,

@@ -1,7 +1,5 @@
 from typing import Union
 from django.contrib.auth.models import User
-from rest_framework.serializers import ValidationError
-from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
 
 def get_token_from_header(request) -> Union[str, None]:
@@ -14,11 +12,8 @@ def get_token_from_header(request) -> Union[str, None]:
         return None
 
 
-def get_user_from_token(token: str) -> Union[User, None]:
+def is_moderator(user: User) -> bool:
     """
-    Получаем юзера из ДЖВТ-токена
+    Проверка юзера на модератора
     """
-    try:
-        return VerifyJSONWebTokenSerializer().validate({'token': token})
-    except ValidationError:
-        return None
+    return user.groups.filter(name='moderators').exists()

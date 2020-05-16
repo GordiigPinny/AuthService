@@ -18,14 +18,22 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from AuthService.jwt_utils import UserTokenObtainPairView
+from Apps.views import GetTokenPairForApp, VerifyTokenForApp, RefreshTokenForApp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api/api-token-auth/', obtain_jwt_token),
-    url(r'^api/api-token-refresh/', refresh_jwt_token),
-    url(r'^api/api-token-verify/', verify_jwt_token),
+    url(r'^api/api-token-auth/', UserTokenObtainPairView.as_view()),
+    url(r'^api/api-token-refresh/', TokenRefreshView.as_view()),
+    url(r'^api/api-token-verify/', TokenVerifyView.as_view()),
+
+    url(r'^api/app-token-auth/', GetTokenPairForApp.as_view()),
+    url(r'^api/app-token-verify/', VerifyTokenForApp.as_view()),
+    url(r'^api/app-token-refresh/', RefreshTokenForApp.as_view()),
+
     url(r'^api/', include('Users.urls')),
+    url(r'^api/', include('Apps.urls')),
 ]
 
 

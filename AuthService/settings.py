@@ -89,6 +89,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'AuthService.wsgi.application'
 
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -159,13 +166,6 @@ if not DEBUG:
     import django_heroku
     django_heroku.settings(locals(), databases=ON_HEROKU, test_runner=False, secret_key=False)
 
-if not ON_HEROKU:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': ACCESS_TOKEN_LIFETIME,

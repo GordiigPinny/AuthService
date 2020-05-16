@@ -1,1 +1,1 @@
-web: python3 manage.py collectstatic --noinput; python3 manage.py migrate; daphne AuthService.asgi:application
+web: python3 manage.py collectstatic --noinput; python3 manage.py migrate; daphne AuthService.asgi:application --bind 0.0.0.0 -v2

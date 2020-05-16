@@ -155,12 +155,14 @@ try:
 except ImportError:
     pass
 
+
+ON_HEROKU = not (os.getenv('ON_HEROKU', '0') == '0')
+
 if not DEBUG:
     import django_heroku
-    django_heroku.settings(locals())
+    django_heroku.settings(locals(), databases=ON_HEROKU)
 
-ON_HEROKU = os.getenv('ON_HEROKU', '0')
-if ON_HEROKU == '0':
+if ON_HEROKU:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

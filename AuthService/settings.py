@@ -159,7 +159,7 @@ if not DEBUG:
     import django_heroku
     django_heroku.settings(locals(), databases=ON_HEROKU, test_runner=False, secret_key=False)
 
-if ON_HEROKU:
+if not ON_HEROKU:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

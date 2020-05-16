@@ -30,7 +30,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'gordiig-rsoi-auth.herokuapp.com']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,8 +129,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = '/static/'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
@@ -160,7 +157,7 @@ ON_HEROKU = not (os.getenv('ON_HEROKU', '0') == '0')
 
 if not DEBUG:
     import django_heroku
-    django_heroku.settings(locals(), databases=ON_HEROKU)
+    django_heroku.settings(locals(), databases=ON_HEROKU, test_runner=False, secret_key=False)
 
 if ON_HEROKU:
     DATABASES = {

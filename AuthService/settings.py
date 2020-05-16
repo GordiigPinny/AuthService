@@ -92,16 +92,25 @@ WSGI_APPLICATION = 'AuthService.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', 'Err'),
-        'USER' : os.getenv('DB_USER', 'Err'),
-        'PASSWORD' : os.getenv('DB_PASSWORD', 'Err'),
-        'HOST' : os.getenv('DB_HOST', 'Err'),
-        'PORT' : '5432',
+ON_HEROKU = os.getenv('ON_HEROKU', '0')
+if ON_HEROKU == '0':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('DB_NAME', 'Err'),
+            'USER' : os.getenv('DB_USER', 'Err'),
+            'PASSWORD' : os.getenv('DB_PASSWORD', 'Err'),
+            'HOST' : os.getenv('DB_HOST', 'Err'),
+            'PORT' : '5432',
+        }
+    }
 
 
 # Password validation

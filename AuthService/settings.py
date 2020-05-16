@@ -26,7 +26,7 @@ SECRET_KEY = '^8bi$i)fivcbgs&snb3wx51z=b6@yeya@s6zqw8noptyurit9#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'gordiig-rsoi-auth.herokuapp.com']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

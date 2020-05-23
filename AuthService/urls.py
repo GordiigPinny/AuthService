@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^api/app-token-verify/', VerifyTokenForApp.as_view()),
     url(r'^api/app-token-refresh/', RefreshTokenForApp.as_view()),
 
+    url(r'^api/o/', include('OAuth.urls')),
+
     url(r'^api/', include('Users.urls')),
     url(r'^api/', include('Apps.urls')),
 ]

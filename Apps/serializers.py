@@ -10,12 +10,16 @@ class AppSerializer(serializers.ModelSerializer):
     id = serializers.CharField(required=True, allow_null=False, allow_blank=False,
                                validators=[UniqueValidator(queryset=App.objects.all())])
     secret = serializers.CharField(required=True, allow_null=False, allow_blank=False, write_only=True)
+    created_by = serializers.IntegerField(read_only=True, source='created_by.id')
+    is_internal = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = App
         fields = [
             'id',
             'secret',
+            'created_by',
+            'is_internal',
         ]
 
     def create(self, validated_data):

@@ -52,6 +52,7 @@ DJANGO_APPS = [
 DEV_APPS = [
     'Users',
     'Apps',
+    'OAuth',
 ]
 
 THIRD_PARTY_APPS = [
@@ -183,4 +184,8 @@ SIMPLE_JWT = {
     #     'Apps.tokens.AppAccessToken',
     # ),
     'USER_ID_CLAIM': 'id',
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'OAuth.tokens.ThirdPartyAppAccessToken'
+    ),
 }

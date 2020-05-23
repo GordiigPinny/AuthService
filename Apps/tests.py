@@ -101,7 +101,7 @@ class TokenObtain(BaseTestCase):
     """
     def setUp(self):
         super().setUp()
-        self.app = App.objects.create(id='Test', secret='Secret')
+        self.app = App.objects.create(id='Test', secret='Secret', is_internal=True)
         self.obtain_path = self.url_prefix + 'app-token-auth/'
         self.verify_path = self.url_prefix + 'app-token-verify/'
         self.refresh_path = self.url_prefix + 'app-token-refresh/'

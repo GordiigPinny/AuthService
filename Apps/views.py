@@ -57,7 +57,7 @@ class GetTokenPairForApp(APIView):
         if not s.is_valid():
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
         try:
-            app = App.objects.get(id=s['id'].value, secret=s['secret'].value)
+            app = App.objects.get(id=s['id'].value, secret=s['secret'].value, is_internal=True)
         except App.DoesNotExist:
             return Response({'error': 'Wrong app credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         token = AppRefreshToken.for_user(app)
